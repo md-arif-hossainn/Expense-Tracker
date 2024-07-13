@@ -16,14 +16,14 @@ class _ExpensesState extends State<Expenses> {
 
   final List<Expense> _registerExpenses = [
     Expense(
-      title: 'tyeg',
+      title: 'Education',
       amount: 250,
       date: DateTime.now(),
       category: Category.work,
     ),
     Expense(
-      title: 'tyeguhijopg',
-      amount: 50,
+      title: 'Travel',
+      amount: 1250,
       date: DateTime.now(),
       category: Category.travel,
     )
@@ -43,8 +43,38 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
+  void _removeExpense(Expense expense){
+    final expenseIndex = _registerExpenses.indexOf(expense);
+    setState(() {
+      _registerExpenses.remove(expense);
+    });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+          content: const Text('Expense deleted'),
+          duration: const Duration(seconds: 3),
+          action: SnackBarAction(
+              label: 'Undo',
+              onPressed: (){
+                setState(() {
+                  _registerExpenses.insert(expenseIndex,expense);
+                });
+              }
+          ),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget mainContent = const Center(child: Text('No expense found. Start adding some!'),);
+
+    if(_registerExpenses.isNotEmpty){
+      mainContent = ExpensesList(
+        expenses:_registerExpenses ,
+        onRemoveExpense: _removeExpense,
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Expense Tracker'),
@@ -58,7 +88,8 @@ class _ExpensesState extends State<Expenses> {
       body: Column(
         children: [
           const Text("the chart",),
-          Expanded(child: ExpensesList(expenses:_registerExpenses ),),
+          Expanded(child: mainContent
+          ),
         ],
       ),
     );
