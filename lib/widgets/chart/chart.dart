@@ -24,11 +24,11 @@ class Chart extends StatelessWidget {
     double maxTotalExpense = 0;
 
     for (final bucket in buckets) {
+
       if (bucket.totalExpenses > maxTotalExpense) {
         maxTotalExpense = bucket.totalExpenses;
       }
     }
-
     return maxTotalExpense;
   }
 
@@ -71,6 +71,8 @@ class Chart extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
+
+          ///icon with this row 
           Row(
             children: buckets
                 .map(

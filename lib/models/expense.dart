@@ -55,7 +55,6 @@ class ExpenseBucket {
     for(final expense in expenses){
       sum += expense.amount;
     }
-
     return sum;
   }
 
