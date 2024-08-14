@@ -1,3 +1,4 @@
+import 'package:expense_tracker/local_db/expense_database.dart';
 import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
@@ -15,68 +16,70 @@ class Expenses extends StatefulWidget {
 }
 class _ExpensesState extends State<Expenses> {
 
-  final List<Expense> _registerExpenses = [
-    Expense(
-      title: 'Work',
-      amount: 140,
-      date: DateTime.now(),
-      category: Category.work,
-    ),
-    Expense(
-      title: 'Travel',
-      amount: 90,
-      date: DateTime.now(),
-      category: Category.travel,
-    ),
-    Expense(
-      title: 'Food Cost',
-      amount: 120,
-      date: DateTime.now(),
-      category: Category.food,
-    ),
-    Expense(
-      title: 'Shopping',
-      amount: 130,
-      date: DateTime.now(),
-      category: Category.shopping,
-    )
+  ExpenseDatabase expenseDatabase = ExpenseDatabase.instance;
+  List<ExpenseModel> _registerExpenses = [
+    // ExpenseModel(
+    //   title: 'Food Cost',
+    //   amount: 120,
+    //   date: DateTime.now(),
+    //   category: Category.food,
+    // ),
+    // ExpenseModel(
+    //   title: 'Shopping',
+    //   amount: 130,
+    //   date: DateTime.now(),
+    //   category: Category.shopping,
+    // )
   ];
-  
+
+  @override
+  void initState() {
+    refreshNotes();
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    expenseDatabase.close();
+    super.dispose();
+  }
+
+  refreshNotes() async {
+    final value = await expenseDatabase.readAll();
+    setState(() {
+      _registerExpenses = value;
+      print("-------------${_registerExpenses.length}");
+    });
+  }
+
   void _openAddExpenseOverlay(){
     showModalBottomSheet(
       useSafeArea: true,
       context: context,
       isScrollControlled: true,
-      builder: (ctx) =>  NewExpense(onAddExpense:_addExpense,),
+      builder: (ctx) =>  NewExpense(onAddExpense: refreshNotes,),
     );
+    print("----------${_registerExpenses.length}");
   }
 
-  void _addExpense(Expense expense){
-    setState(() {
-      _registerExpenses.add(expense);
-    });
-  }
-
-  void _removeExpense(Expense expense){
-    final expenseIndex = _registerExpenses.indexOf(expense);
-    setState(() {
-      _registerExpenses.remove(expense);
-    });
+  void _removeExpense(ExpenseModel expense){
+    expenseDatabase.delete(expense.id!);
+      refreshNotes();
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-          content: const Text('Expense deleted'),
-          duration: const Duration(seconds: 3),
-          action: SnackBarAction(
-              label: 'Undo',
-              onPressed: (){
-                setState(() {
-                  _registerExpenses.insert(expenseIndex,expense);
-                });
-              }
-          ),
-        )
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //      SnackBar(
+    //       content: const Text('Expense deleted'),
+    //       duration: const Duration(seconds: 3),
+    //       action: SnackBarAction(
+    //           label: 'Undo',
+    //           onPressed: (){
+    //             setState(() {
+    //               _registerExpenses.insert(expenseIndex,expense);
+    //             });
+    //           }
+    //       ),
+    //     )
+    // );
   }
 
   @override

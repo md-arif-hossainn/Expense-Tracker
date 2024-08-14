@@ -1,12 +1,13 @@
 import 'dart:io';
 
+import 'package:expense_tracker/local_db/expense_database.dart';
 import 'package:expense_tracker/models/expense.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 class NewExpense extends StatefulWidget {
   const NewExpense({super.key, required this.onAddExpense});
 
-  final void Function(Expense expense) onAddExpense;
+  final VoidCallback onAddExpense;
 
   @override
   State<NewExpense> createState() => _NewExpenseState();
@@ -24,6 +25,7 @@ class _NewExpenseState extends State<NewExpense> {
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
   Category _selectedCategory = Category.leisure;
+  ExpenseDatabase expenseDatabase = ExpenseDatabase.instance;
 
   void _presentDatePicker() async {
 
@@ -85,10 +87,10 @@ class _NewExpenseState extends State<NewExpense> {
        _showDialog();
        return;
      }
-     widget.onAddExpense(
-       Expense(title: _titleController.text, amount: enteredAmount, date: _selectedDate!, category: _selectedCategory),
-     );
 
+     final model = ExpenseModel(title: _titleController.text, amount:enteredAmount, date: _selectedDate! ,category: _selectedCategory,);
+     expenseDatabase.create(model);
+     widget.onAddExpense();
      Navigator.pop(context);
 
   }

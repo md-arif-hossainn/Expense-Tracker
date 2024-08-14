@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/expense.dart';
 
 class ExpensesItem extends StatelessWidget {
   const ExpensesItem(this.expense,{super.key});
-  final Expense expense;
+  final ExpenseModel expense;
 
   @override
   Widget build(BuildContext context) {
+    final formatter = DateFormat.yMd();
+    final formattedDate = formatter.format(expense.date);
     return  Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -33,7 +36,7 @@ class ExpensesItem extends StatelessWidget {
                      Icon(categoryIcons[expense.category]),
                      const SizedBox(width: 8,),
                      Text(
-                         expense.formatterDate,
+                         formattedDate,
                      ),
                    ],
                  )
