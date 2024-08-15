@@ -66,20 +66,22 @@ class _ExpensesState extends State<Expenses> {
     expenseDatabase.delete(expense.id!);
       refreshNotes();
     ScaffoldMessenger.of(context).clearSnackBars();
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //      SnackBar(
-    //       content: const Text('Expense deleted'),
-    //       duration: const Duration(seconds: 3),
-    //       action: SnackBarAction(
-    //           label: 'Undo',
-    //           onPressed: (){
-    //             setState(() {
-    //               _registerExpenses.insert(expenseIndex,expense);
-    //             });
-    //           }
-    //       ),
-    //     )
-    // );
+    ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+          content: const Text('Expense deleted'),
+          duration: const Duration(seconds: 3),
+          action: SnackBarAction(
+              label: 'Undo',
+              onPressed: (){
+                setState(() {
+                  expenseDatabase.create(expense);
+                  refreshNotes();
+                 // _registerExpenses.insert(expenseIndex,expense);
+                });
+              }
+          ),
+        )
+    );
   }
 
   @override
