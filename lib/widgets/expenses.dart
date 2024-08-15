@@ -76,7 +76,6 @@ class _ExpensesState extends State<Expenses> {
                 setState(() {
                   expenseDatabase.create(expense);
                   refreshNotes();
-                 // _registerExpenses.insert(expenseIndex,expense);
                 });
               }
           ),
